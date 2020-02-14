@@ -3,18 +3,18 @@ package io.github.jeremysher.pid;
 import java.util.function.DoubleSupplier;
 
 public class PIDController {
-	private final double kP, kI, kD, kIz, kF;
+	private final double kP, kI, kD;
 	private final DoubleSupplier dtSupplier, measurementSupplier, setpointSupplier;
 	private double lastError = 0.0;
 	private double sum = 0.0;
+	private double pTolerance, vTolerance = 0.0;
+	private double error, errorRate;
 	
-	public PIDController(double p, double i, double d, double iz, double ff,
+	public PIDController(double p, double i, double d,
 			DoubleSupplier dt, DoubleSupplier measurement, DoubleSupplier setpoint) {
 		kP = p;
 		kI = i;
 		kD = d;
-		kIz = iz;
-		kF = ff;
 		dtSupplier = dt;
 		measurementSupplier = measurement;
 		setpointSupplier = setpoint;
@@ -25,12 +25,25 @@ public class PIDController {
 		double measurement = measurementSupplier.getAsDouble();
 		double setpoint = setpointSupplier.getAsDouble();
 		
-		double error = setpoint - measurement;
+		error = setpoint - measurement;
 		sum += error * dt;
-		double errorRate = (error - lastError) / dt;
+		errorRate = (error - lastError) / dt;
 		lastError = error;
 		
 		return kP * error + kI * sum + kD * errorRate;
+	}
+	
+	public boolean atSetpoint() {
+		return Math.abs(error) < pTolerance && Math.abs(errorRate) < vTolerance;
+	}
+	
+	public void setTolerance(double positionTolerance) {
+		setTolerance(positionTolerance, 0);
+	}
+	
+	public void setTolerance(double positionTolerance, double velocityTolerance) {
+		pTolerance = positionTolerance;
+		vTolerance = velocityTolerance;
 	}
 
 }
