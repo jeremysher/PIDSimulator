@@ -8,7 +8,7 @@ public class PIDController {
 	private double lastError = 0.0;
 	private double sum = 0.0;
 	private double pTolerance, vTolerance = 0.0;
-	private double error, errorRate;
+	private double error, errorRate = 0.0;
 	
 	public PIDController(double p, double i, double d,
 			DoubleSupplier dt, DoubleSupplier measurement, DoubleSupplier setpoint) {
@@ -24,6 +24,8 @@ public class PIDController {
 		double dt = dtSupplier.getAsDouble();
 		double measurement = measurementSupplier.getAsDouble();
 		double setpoint = setpointSupplier.getAsDouble();
+		
+		if (dt == 0) dt = 0.01;
 		
 		error = setpoint - measurement;
 		sum += error * dt;

@@ -3,6 +3,8 @@
 	<name>PIDSimulator</name>
 	<comment></comment>
 	<projects>
+		<project>AnimationFramework</project>
+		<project>VectorMath</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
